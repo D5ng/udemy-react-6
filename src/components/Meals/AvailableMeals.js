@@ -14,7 +14,7 @@ const AvailableMeals = () => {
     const fetchMeals = async () => {
       setIsLoading(true)
       try {
-        const response = await fetch(FIREBASE_KEY)
+        const response = await fetch(`${FIREBASE_KEY}meals.json`)
 
         if (!response.ok) throw new Error("Response Not Ok")
 

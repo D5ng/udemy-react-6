@@ -50,6 +50,13 @@ function Checkout(props) {
       return
     }
 
+    props.onConfirm({
+      name: enteredName,
+      street: enteredStreet,
+      postal: enteredPostal,
+      city: enteredCity,
+    })
+
     for (const inputRef in inputRefObj) {
       inputRefObj[inputRef].current.value = ""
     }

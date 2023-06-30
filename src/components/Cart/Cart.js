@@ -6,6 +6,7 @@ import classes from "./Cart.module.css"
 import CartContext from "../../store/cart-context"
 import Checkout from "./Checkout"
 
+const FIREBASE_KEY = process.env.REACT_APP_FIREBASE_KEY
 const Cart = (props) => {
   const [isCheckout, setIsCheckout] = useState(false)
   const cartCtx = useContext(CartContext)
@@ -23,6 +24,23 @@ const Cart = (props) => {
 
   const orderHandler = () => {
     setIsCheckout(true)
+  }
+
+  console.log(cartCtx)
+
+  const submitOrderHandler = (userData) => {
+    fetch(`${FIREBASE_KEY}orders.json`, {
+      method: "POST",
+      body: JSON.stringify({
+        user: userData,
+        orderedItems: cartCtx.items,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+
+    console.log(userData)
   }
 
   const cartItems = (
@@ -61,7 +79,7 @@ const Cart = (props) => {
         <span>{totalAmount}</span>
       </div>
 
-      {isCheckout && <Checkout onCancel={props.onClose} />}
+      {isCheckout && <Checkout onConfirm={submitOrderHandler} onCancel={props.onClose} />}
       {!isCheckout && modalActions}
     </Modal>
   )
