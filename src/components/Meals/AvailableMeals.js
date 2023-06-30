@@ -7,28 +7,48 @@ const FIREBASE_KEY = process.env.REACT_APP_FIREBASE_KEY
 
 const AvailableMeals = () => {
   const [meals, setMeals] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   const fetchMeals = useCallback(async () => {
-    const response = await fetch(FIREBASE_KEY)
-    const responseData = await response.json()
+    setIsLoading(true)
+    setError(false)
 
-    const loadedMeals = []
+    try {
+      const response = await fetch(FIREBASE_KEY)
 
-    for (const meal in responseData) {
-      loadedMeals.push({
-        id: meal,
-        name: responseData[meal].name,
-        description: responseData[meal].description,
-        price: responseData[meal].price,
-      })
+      if (!response.ok) throw new Error("Response Not Ok")
+
+      const responseData = await response.json()
+      const loadedMeals = []
+
+      for (const meal in responseData) {
+        loadedMeals.push({
+          id: meal,
+          name: responseData[meal].name,
+          description: responseData[meal].description,
+          price: responseData[meal].price,
+        })
+      }
+
+      setMeals(loadedMeals)
+    } catch (error) {
+      setError(error.message)
     }
-
-    setMeals(loadedMeals)
+    setIsLoading(false)
   }, [])
 
   useEffect(() => {
     fetchMeals()
   }, [fetchMeals])
+
+  if (isLoading) {
+    return (
+      <section className={classes.MealsLoading}>
+        <p>Loading...</p>
+      </section>
+    )
+  }
 
   console.log(meals)
 
